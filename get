@@ -1,0 +1,52 @@
+startFunc = 0x408364
+
+
+    
+
+
+class Node(object):
+    def __init__(self, data):
+        self.data = data
+        self.children = []
+
+    def add_child(self, obj):
+        self.children.append(obj)
+
+
+head = Node(startFunc)
+
+childs = CodeRefsTo(startFunc,0)
+
+
+def findLeaf(node, addr):
+    addr = idaapi.get_func(addr).start_ea
+    for xref in CodeRefsTo(addr,0):
+        print(hex(xref))
+        child = Node(xref)
+        node.add_child(child)
+    
+    for child in node.children:
+        findLeaf(child, child.data)
+        
+        
+
+class FUNCHandler(object):
+    def __init__(self):
+        self.dummy = ''
+        self.funcDict = {}
+        
+        
+    
+    def getFuncRange(self):
+        for func in Functions():
+            print("Func : "+ hex(func))
+            objfunc = idaapi.get_func(func)
+            print ("startEA : " + hex(objfunc.start_ea))
+            print ("endEA : " + hex(objfunc.end_ea))            
+
+          
+    
+
+findLeaf(head, startFunc)
+
+
